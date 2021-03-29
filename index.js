@@ -162,8 +162,8 @@ class Pipe {
 
 class Player {
     constructor() {
-        this.width = 30;
-        this.height = 20;
+        this.width = 37;
+        this.height = 25;
         this.x = 20;
         this.y = canvas.height/2 - this.height/2;
 
