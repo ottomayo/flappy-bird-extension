@@ -167,19 +167,56 @@ class Player {
         this.x = 20;
         this.y = canvas.height/2 - this.height/2;
 
-        this.image = new Image();
-        this.image.src = 'images/flappy_bird.png';
+        this.wingupImage = new Image();
+        this.wingupImage.src = 'images/flappy_bird_wingup.png'
+        this.wingmiddleImage = new Image();
+        this.wingmiddleImage.src = 'images/flappy_bird_wingmiddle.png'
+        this.wingdownImage = new Image();
+        this.wingdownImage.src = 'images/flappy_bird_wingdown.png'
+
+        this.currentImage = this.wingmiddleImage;
+        this.frameCount = 0;
+        this.currentFrame = 1;
+
+        this.fallRotation = - Math.PI / 6;
 
         this.dead = false;
     }
     draw(rect=false) {
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        ctx.drawImage(this.currentImage, this.x, this.y, this.width, this.height);
         if(rect) {
             ctx.beginPath();
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.strokeStyle = 'red';
             ctx.stroke();
             ctx.closePath();
+        }
+    }
+    changeFrame() {
+        if(this.frameCount === 10) {
+            switch(this.currentFrame) {
+                case 1:
+                    this.currentImage = this.wingmiddleImage;
+                    break;
+                case 2:
+                    this.currentImage = this.wingupImage;
+                    break;
+                case 3:
+                    this.currentImage = this.wingmiddleImage;
+                    break;
+                case 4:
+                    this.currentImage = this.wingdownImage;
+                    break;
+            }
+            if(this.currentFrame === 4) {
+                this.currentFrame = 1;
+            } else {
+                this.currentFrame += 1;
+            }
+
+            this.frameCount = 0;
+        } else {
+            this.frameCount += 1;
         }
     }
     onFloorOrCeiling() {
@@ -248,6 +285,11 @@ function mainLoop() {
             if(player.x > pipes[i].x + pipes[i].width && ! pipes[i].passed) {
                 game.score++;
                 pipes[i].passed = true;
+
+                if(game.score % 10 === 0) {
+                    game.speed += 0.25;
+                }
+                console.log(game.speed);
             }
 
             if(pipes[i].x < -200) {
@@ -257,6 +299,7 @@ function mainLoop() {
 
         game.drawFloor();
 
+        player.changeFrame();
         player.draw(rect=false);
         // console.log(pipes);
 
